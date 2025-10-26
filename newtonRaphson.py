@@ -69,6 +69,12 @@ class NewtonRaphsonRootFinder:
         for result in roots:
             tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
         print(tabulate(tableData, headers=["Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
+    
+    def printRoots(self,root: list[NewtonRaphsonRoot]):
+        tableData = []
+        for result in root:
+            tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
+        print(tabulate(tableData, headers=["Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
 
 if __name__ == "__main__":
     # Example usage

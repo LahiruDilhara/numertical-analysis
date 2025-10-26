@@ -10,7 +10,7 @@ class Interval:
 
 
 @dataclasses.dataclass
-class SecantRaphsonRoot:
+class SecantRoot:
     root: float
     iterations: int
     error: float
@@ -19,9 +19,9 @@ class SecantRaphsonRoot:
 @dataclasses.dataclass
 class SecantRaphsonResult:
     interval: Interval
-    root: SecantRaphsonRoot
+    root: SecantRoot
 
-class SecantRaphsonRootFinder:
+class SecantRootFinder:
     def __init__(self, intervalStartPoint:float = 0.0, intervalStepSize:float = 1.0, intervalMaxSteps:int = 1000, rootTolerance:float = 1e-7, rootFindingMaximumIterations:int = 1000):
         self.intervalStartPoint = intervalStartPoint
         self.intervalStepSize = intervalStepSize
@@ -42,7 +42,7 @@ class SecantRaphsonRootFinder:
             value = nextValue
         return intervals
     
-    def _findRootInInterval(self, func: Callable[[float],float], interval: Interval) -> SecantRaphsonRoot | None:
+    def _findRootInInterval(self, func: Callable[[float],float], interval: Interval) -> SecantRoot | None:
         x0 = interval.low
         x1 = interval.high
         startTime = time.perf_counter()
@@ -52,7 +52,7 @@ class SecantRaphsonRootFinder:
             x2 = x1 - (func(x1)* (x1 - x0) / (func(x1) - func(x0)))
             if abs(x2 - x1) < self.rootTolerance:
                 endTime = time.perf_counter()
-                return SecantRaphsonRoot(root=x2, iterations=i+1, error=abs(x2 - x1), time=endTime - startTime)
+                return SecantRoot(root=x2, iterations=i+1, error=abs(x2 - x1), time=endTime - startTime)
             x0 = x1
             x1 = x2
         return None
@@ -74,13 +74,19 @@ class SecantRaphsonRootFinder:
         for result in roots:
             tableData.append([f"[{result.interval.low}, {result.interval.high}]", result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
         print(tabulate(tableData, headers=["Interval", "Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
+    
+    def printRoots(self,root: list[SecantRoot]):
+        tableData = []
+        for result in root:
+            tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
+        print(tabulate(tableData, headers=["Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
 
 if __name__ == "__main__":
     # Example usage
     def func(x):
         return x**2 - 5*x - 2
 
-    secantFinder = SecantRaphsonRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
+    secantFinder = SecantRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = secantFinder.findRoots(func)
     if roots:
         secantFinder.printSecantResults(roots)

@@ -79,6 +79,13 @@ class BisectionRootFinder:
         for result in roots:
             tableData.append([f"[{result.interval.low}, {result.interval.high}]", result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
         print(tabulate(tableData, headers=["Interval", "Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
+    
+    def printRoots(self,root: list[BisectionResult]):
+        tableData = []
+        for result in root:
+            tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
+        print(tabulate(tableData, headers=["Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
+        
 
 
 # Test interval finding
