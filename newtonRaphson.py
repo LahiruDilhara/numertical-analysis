@@ -64,7 +64,7 @@ class NewtonRaphsonRootFinder:
                 results.append(NewtonRaphsonResult(root=root))
         return results
 
-    def printRoots(self, roots: list[NewtonRaphsonResult]):
+    def printNewtonRaphsonResults(self, roots: list[NewtonRaphsonResult]):
         tableData = []
         for result in roots:
             tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
@@ -81,6 +81,6 @@ if __name__ == "__main__":
     rootFinder = NewtonRaphsonRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = rootFinder.findRoots(func, derivativeFunc)
     if roots:
-        rootFinder.printRoots(roots)
+        rootFinder.printNewtonRaphsonResults(roots)
     else:
         print("No roots found in the specified intervals.")

@@ -1,30 +1,27 @@
-from typing import Callable
-import math
 import dataclasses
-from tabulate import tabulate
+from typing import Callable
 import time
+from tabulate import tabulate
 
 @dataclasses.dataclass
 class Interval:
     low: float
     high: float
 
+
 @dataclasses.dataclass
-class BisectionRoot:
+class SecantRaphsonRoot:
     root: float
     iterations: int
     error: float
     time: float = 0.0
 
-
 @dataclasses.dataclass
-class BisectionResult:
+class SecantRaphsonResult:
     interval: Interval
-    root: BisectionRoot
+    root: SecantRaphsonRoot
 
-
-
-class BisectionRootFinder:
+class SecantRaphsonRootFinder:
     def __init__(self, intervalStartPoint:float = 0.0, intervalStepSize:float = 1.0, intervalMaxSteps:int = 1000, rootTolerance:float = 1e-7, rootFindingMaximumIterations:int = 1000):
         self.intervalStartPoint = intervalStartPoint
         self.intervalStepSize = intervalStepSize
@@ -44,54 +41,48 @@ class BisectionRootFinder:
                 intervals.append(Interval(low=value, high=nextValue))
             value = nextValue
         return intervals
-
-
-    def _findRootInInterval(self, func: Callable[[float],float], interval: Interval) -> BisectionRoot | None:
-        a = interval.low
-        b = interval.high
-        x1 = (a + b) / 2.0
+    
+    def _findRootInInterval(self, func: Callable[[float],float], interval: Interval) -> SecantRaphsonRoot | None:
+        x0 = interval.low
+        x1 = interval.high
         startTime = time.perf_counter()
         for i in range(self.rootFindingMaximumIterations):
-            x1 = (a + b) / 2.0
-            f1 = func(x1)
-            if f1 > 0:
-                b = x1
-            else:
-                a = x1
-            if abs(b-a) < self.rootTolerance:
+            if func(x1) - func(x0) == 0:
+                return None
+            x2 = x1 - (func(x1)* (x1 - x0) / (func(x1) - func(x0)))
+            if abs(x2 - x1) < self.rootTolerance:
                 endTime = time.perf_counter()
-                return BisectionRoot(root=x1, iterations=i+1, error=abs(b-a), time=endTime - startTime)
+                return SecantRaphsonRoot(root=x2, iterations=i+1, error=abs(x2 - x1), time=endTime - startTime)
+            x0 = x1
+            x1 = x2
         return None
     
-    def findRoots(self, func: Callable[[float],float]) -> list[BisectionResult] | None:
+    def findRoots(self, func: Callable[[float],float]) -> list[SecantRaphsonResult] | None:
         intervals = self.findIntervals(func)
         if not intervals:
             return None
-        roots: list[BisectionResult] = []
+        
+        results: list[SecantRaphsonResult] = []
         for interval in intervals:
             root = self._findRootInInterval(func, interval)
             if root is not None:
-                roots.append(BisectionResult(interval=interval, root=root))
-        return roots
-    
-    def printBisectionResults(self, roots: list[BisectionResult]):
+                results.append(SecantRaphsonResult(root=root, interval=interval))
+        return results
+
+    def printSecantResults(self, roots: list[SecantRaphsonResult]):
         tableData = []
         for result in roots:
             tableData.append([f"[{result.interval.low}, {result.interval.high}]", result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
         print(tabulate(tableData, headers=["Interval", "Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
 
-
-# Test interval finding
 if __name__ == "__main__":
-    def testFunc(x: float) -> float:
+    # Example usage
+    def func(x):
         return x**2 - 5*x - 2
-        # return 2*x - 2
 
-    
-    bisectionFinder = BisectionRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
-    roots = bisectionFinder.findRoots(testFunc)
-    if roots is None:
-        print("No roots found")
-        exit(1)
-    
-    bisectionFinder.printBisectionResults(roots)
+    secantFinder = SecantRaphsonRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
+    roots = secantFinder.findRoots(func)
+    if roots:
+        secantFinder.printSecantResults(roots)
+    else:
+        print("No roots found in the specified intervals.")
