@@ -79,11 +79,11 @@ class BisectionRootFinder:
         for result in roots:
             tableData.append([f"[{result.interval.low}, {result.interval.high}]", result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
         print(tabulate(tableData, headers=["Interval", "Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
-    
-    def printRoots(self,root: list[BisectionResult]):
+
+    def printRoots(self,root: list[BisectionRoot]):
         tableData = []
         for result in root:
-            tableData.append([result.root.root, result.root.iterations, result.root.error, result.root.time * 1000])
+            tableData.append([result.root, result.iterations, result.error, result.time * 1000])
         print(tabulate(tableData, headers=["Root (x)", "Iterations", "Error", "Time (milliseconds)"]))
         
 
@@ -98,7 +98,7 @@ if __name__ == "__main__":
     bisectionFinder = BisectionRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = bisectionFinder.findRoots(testFunc)
     if roots is None:
-        print("No roots found")
+        print("No roots found in the specified intervals.")
         exit(1)
     
     bisectionFinder.printBisectionResults(roots)
