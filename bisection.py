@@ -50,7 +50,7 @@ class BisectionRootFinder:
         a = interval.low
         b = interval.high
         x1 = (a + b) / 2.0
-        startTime = time.time()
+        startTime = time.perf_counter()
         for i in range(self.rootFindingMaximumIterations):
             x1 = (a + b) / 2.0
             f1 = func(x1)
@@ -59,7 +59,7 @@ class BisectionRootFinder:
             else:
                 a = x1
             if abs(b-a) < self.rootTolerance:
-                endTime = time.time()
+                endTime = time.perf_counter()
                 return BisectionRoot(root=x1, iterations=i+1, error=abs(b-a), time=endTime - startTime)
         return None
     

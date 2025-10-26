@@ -43,11 +43,11 @@ class NewtonRaphsonRootFinder:
     
     def _findRootInInterval(self, func: Callable[[float],float], derivativeFunc: Callable[[float],float], interval: Interval) -> NewtonRaphsonRoot | None:
         x0 = (interval.low + interval.high) / 2.0
-        startTime = time.time()
+        startTime = time.perf_counter()
         for i in range(self.rootFindingMaximumIterations):
             x1 = x0 - (func(x0) / derivativeFunc(x0))
             if abs(x1 - x0) < self.rootTolerance:
-                endTime = time.time()
+                endTime = time.perf_counter()
                 return NewtonRaphsonRoot(root=x1, iterations=i+1, error=abs(x1 - x0), time=endTime - startTime)
             x0 = x1
         return None
