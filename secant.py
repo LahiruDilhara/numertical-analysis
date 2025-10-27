@@ -90,9 +90,12 @@ if __name__ == "__main__":
         # return x**4 + 10*x**2 - 5*x - 2
         # return 20*x**6 + 10*x**4 -5*x**3 + 10*x**2 + 5*x - 40
         # return math.sin(x) * 10 + x**2 -20
-        return math.pow(math.sin(5*x),2) * 10 + x**2 -4
+        # return math.pow(math.sin(5*x),2) * 10 + x**2 -4
+        # return x**3 - 6*x**2 + 11*x - 6
+        # return math.cos(x) - x
+        return math.e**x - 3*x**2
 
-    secantFinder = SecantRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
+    secantFinder = SecantRootFinder(intervalStartPoint=-20, intervalStepSize=0.1, intervalMaxSteps=400, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = secantFinder.findRoots(func)
     if roots:
         secantFinder.printSecantResults(roots)
