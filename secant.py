@@ -1,7 +1,9 @@
 import dataclasses
+import math
 from typing import Callable
 import time
 from tabulate import tabulate
+from math import pow, sin
 
 @dataclasses.dataclass
 class Interval:
@@ -84,7 +86,11 @@ class SecantRootFinder:
 if __name__ == "__main__":
     # Example usage
     def func(x):
-        return x**2 - 5*x - 2
+        # return x**2 - 5*x - 2
+        # return x**4 + 10*x**2 - 5*x - 2
+        # return 20*x**6 + 10*x**4 -5*x**3 + 10*x**2 + 5*x - 40
+        # return math.sin(x) * 10 + x**2 -20
+        return math.pow(math.sin(5*x),2) * 10 + x**2 -4
 
     secantFinder = SecantRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = secantFinder.findRoots(func)

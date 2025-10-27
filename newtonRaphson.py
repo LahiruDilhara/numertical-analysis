@@ -1,7 +1,9 @@
 import dataclasses
+import math
 from typing import Callable
 import time
 from tabulate import tabulate
+from math import pow, sin
 
 @dataclasses.dataclass
 class Interval:
@@ -42,7 +44,7 @@ class NewtonRaphsonRootFinder:
         return intervals
     
     def _findRootInInterval(self, func: Callable[[float],float], derivativeFunc: Callable[[float],float], interval: Interval) -> NewtonRaphsonRoot | None:
-        x0 = (interval.low + interval.high) / 2.0
+        x0 =  interval.high
         startTime = time.perf_counter()
         for i in range(self.rootFindingMaximumIterations):
             x1 = x0 - (func(x0) / derivativeFunc(x0))
@@ -79,10 +81,19 @@ class NewtonRaphsonRootFinder:
 if __name__ == "__main__":
     # Example usage
     def func(x: float) -> float:
-        return x**2 - 5*x - 2
+        # return x**2 - 5*x - 2
+        # return x**4 + 10*x**2 - 5*x - 2
+        # return 20*x**6 + 10*x**4 -5*x**3 + 10*x**2 + 5*x - 40
+        # return math.sin(x) * 10 + x**2 -20
+        return math.pow(math.sin(5*x),2) * 10 + x**2 -4
 
     def derivativeFunc(x: float) -> float:
-        return 2*x - 5
+        # return 2*x - 5
+        # return 4*x**3 + 20*x - 5
+        # return 120*x**5 + 40*x**3 -15*x**2 + 20*x + 5
+        # return 10*math.cos(x) + 2*x
+        return 100*math.sin(5*x)*math.cos(5*x) + 2*x
+        
 
     rootFinder = NewtonRaphsonRootFinder(intervalStartPoint=-200.0, intervalStepSize=0.1, intervalMaxSteps=60000, rootTolerance=1e-7, rootFindingMaximumIterations=10000000)
     roots = rootFinder.findRoots(func, derivativeFunc)
